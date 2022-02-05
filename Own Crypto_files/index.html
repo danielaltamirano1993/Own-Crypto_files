@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0107)https://etoro-cdn.etorostatic.com/web-client/recaptcha/index.html?guid=091b79c0-edf9-4017-b6da-f076cd77f08b -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+	<title>RECAPTCHA</title>
+	<script type="text/javascript" async="" src="./recaptcha__en.js.download" crossorigin="anonymous" integrity="sha384-o1nfdUm9cV7Sx6HxXDsnady1EGmCBTwza/JTA6OSowyOK+wq0YF0+F9jejHVacaR"></script><script src="./api.js.download" async="" defer=""></script>
+	<style>
+			#recaptcha{
+				position: absolute;
+				bottom:10px;
+		}
+		.grecaptcha-badge { visibility: hidden; }
+		.rc-imageselect-desc, .rc-imageselect-desc strong, .rc-imageselect-desc span {
+			font-size: initial!important;
+		}
+	</style>
+</head>
+<body>
+
+
+<div class="container">
+	<div id="recaptcha" data-badge="inline" data-size="invisible" data-error-callback="onError" data-callback="onSubmit" class="g-recaptcha" data-sitekey="6LcoqMsZAAAAAJ5Mmes3t5lRii5dATe1eDEHUfhj"><div class="grecaptcha-badge" data-style="inline" style="width: 256px; height: 60px; box-shadow: gray 0px 0px 5px;"><div class="grecaptcha-logo"><iframe title="reCAPTCHA" src="./anchor.html" width="256" height="60" role="presentation" name="a-jhx0amd6sjhx" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox"></iframe></div><div class="grecaptcha-error"></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div><iframe style="display: none;" src="./saved_resource.html"></iframe></div></div>
+<script>
+		var urlParams = window.firstQuery = {};
+		var isFF = navigator.userAgent.indexOf('Firefox') > -1;
+		var captchaWrapper = document.getElementById('recaptcha');
+		if(isFF){
+			delete captchaWrapper.dataset.size;
+		}
+					var guid,
+					    match,
+						pl     = /\+/g,  // Regex for replacing addition symbol with a space
+						search = /([^&=]+)=?([^&]*)/g,
+						scriptRegex = /\<script/g,
+						decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+						parseObj = function(s){
+							if(typeof(s) === 'object')
+								return s;
+							var r = s;
+							try {
+								r = JSON.parse(r);
+							}catch(err){
+							}
+							return r
+						},
+						query  = window.location.search.substring(1);
+					while (match = search.exec(query))
+					   urlParams[decode(match[1])] = parseObj(decode(match[2]));
+
+				    guid = urlParams.guid || "";
+					//prepare
+					var windowParams = urlParams.windowParams;
+					if (windowParams){
+						for (var key in windowParams){
+							var value = windowParams[key];
+							if (!window[key]){
+								window[key] = value;
+							}
+						}
+					}
+
+		function isOriginValid(origin){
+			if (!origin || origin=="file://")
+					return true;
+			if (/etoro\.com$/.test(origin))
+					return true;
+			if (/etoro\.com\.cn$/.test(origin))
+					return true;
+		}
+
+		function onSubmit(token){
+			window.parent.postMessage({
+				type : "recaptchaResult" + guid, token: token
+			}, '*');
+		}
+
+		function onload(){
+			window.parent.postMessage({
+				type : "recaptchaReady" + guid
+			}, '*');
+		}
+
+	function onError(error){
+		window.parent.postMessage({
+			type : "recaptchaFailed" + guid, token: null
+		}, '*');
+	}
+
+	function onMessage(event){
+		//if (!isOriginValid(event.origin)) return
+		var dataParsed = {};
+		if(event.data){
+			try{
+				dataParsed = JSON.parse(event.data)
+			}
+			catch(e){
+				return;
+			}
+		}
+		if(event && event.type === 'message' && dataParsed.type === 'submit'){
+			grecaptcha.execute();	
+			initListener();
+		}
+		if(event && event.type === 'message' && dataParsed.type === 'reset'){
+			grecaptcha.reset();	
+		}
+	}
+
+	function addEvent(){
+		window[window.attachEvent ? 'attachEvent' : 'addEventListener'].apply(this,arguments);
+	}
+
+	function initListener() {
+
+	window.recaptchaCloseListener = true
+
+	HTMLCollection.prototype.find = Array.prototype.find;
+	var recaptchaWindow = document
+			.getElementsByTagName('iframe')
+			.find(x=>x.src.includes('google.com/recaptcha/api2/bframe'))
+			.parentNode.parentNode;
+
+
+	new MutationObserver(x => recaptchaWindow.style.opacity == 0 && onTestClosure())
+			.observe(recaptchaWindow, { attributes: true, attributeFilter: ['style'] })
+}
+
+ function onTestClosure(){
+	window.parent.postMessage({
+			type : "recaptchaClosed" + guid, token: null
+		}, '*');
+ }
+
+	addEvent('onmessage' , onMessage);
+	addEvent('message' , onMessage);
+	
+</script>
+
+
+
+<div style="visibility: hidden; position: absolute; width: 100%; top: -10000px; left: 0px; right: 0px; transition: visibility 0s linear 0.3s, opacity 0.3s linear 0s; opacity: 0;"><div style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 2000000000; background-color: rgb(255, 255, 255); opacity: 0.5;"></div><div style="margin: 0px auto; top: 0px; left: 0px; right: 0px; position: absolute; border: 1px solid rgb(204, 204, 204); z-index: 2000000000; background-color: rgb(255, 255, 255); overflow: hidden;"><iframe title="recaptcha challenge expires in two minutes" src="./bframe.html" name="c-jhx0amd6sjhx" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox" style="width: 100%; height: 100%;"></iframe></div></div></body></html>
